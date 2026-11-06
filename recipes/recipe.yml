@@ -31,7 +31,7 @@ modules:
         - swaylock # screen locker
         - swayidle # runs commands on idle (auto-lock, screen off, lock before suspend)
         - swaybg # wallpaper
-        - polkit-gnome # polkit authentication agent (privilege prompts)
+        - mate-polkit # polkit authentication agent (privilege prompts)
         - gdm # display/login manager
         - tmux
         - NetworkManager # network management daemon
