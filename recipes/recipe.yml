@@ -13,10 +13,9 @@ image-version: latest # You can pin to a specific version of Fedora as well
 # you can include multiple instances of the same module
 modules:
   # Hyprland desktop layer (base-main ships no desktop environment)
+  # Hyprland and the hypr* tools come from Fedora's own repos
+  # (solopasha/hyprland COPR only builds for rawhide, so it fails on Fedora 44)
   - type: dnf
-    repos:
-      copr:
-        - solopasha/hyprland # up-to-date Hyprland + hypr* ecosystem
     install:
       packages:
         # compositor + hypr ecosystem
