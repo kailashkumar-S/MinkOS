@@ -3,19 +3,70 @@
 # image will be published to ghcr.io/<user>/<name>
 name: minkos
 # description will be included in the image's metadata
-description: minkos - My distro based on wayblue hyprland image
+description: minkos - My distro based on ublue OS base-main with Hyprland
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/wayblueorg/hyprland
+base-image: ghcr.io/ublue-os/base-main
 image-version: latest # You can pin to a specific version of Fedora as well
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
 modules:
+  # Hyprland desktop layer (base-main ships no desktop environment)
+  - type: dnf
+    repos:
+      copr:
+        - solopasha/hyprland # up-to-date Hyprland + hypr* ecosystem
+    install:
+      packages:
+        # compositor + hypr ecosystem
+        - hyprland
+        - hyprpaper
+        - hypridle
+        - hyprlock
+        - hyprpolkitagent
+        - xdg-desktop-portal-hyprland
+        - xdg-desktop-portal-gtk
+        - qt5-qtwayland
+        - qt6-qtwayland
+        # login manager
+        - greetd
+        - tuigreet
+        # desktop essentials
+        - waybar
+        - fuzzel
+        - mako
+        - kitty
+        - grim
+        - slurp
+        - wl-clipboard
+        - cliphist
+        - brightnessctl
+        - playerctl
+        - pavucontrol
+        - network-manager-applet
+        - blueman
+        - pipewire
+        - wireplumber
+        - pipewire-pulseaudio
+        - google-noto-sans-fonts
+        - google-noto-emoji-fonts
+        - fontawesome-fonts-all
+
+  # copy after package installs so our configs (e.g. /etc/greetd/config.toml) win
   - type: files
     files:
       - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+        destination: / # copies files/system/* into the image's root folder /
+
+  - type: systemd
+    system:
+      enabled:
+        - greetd.service
+
+  - type: script
+    scripts:
+      - graphical-target.sh
 
   - type: dnf
     repos:
@@ -36,10 +87,7 @@ modules:
         - fd-find
     remove:
       packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
-        - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+       
 
   - type: default-flatpaks
     configurations:
@@ -47,8 +95,7 @@ modules:
         scope: system
         # If no repo information is specified, Flathub will be used by default
         install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
-          - org.gnome.Loupe
+         
       - scope: user # Also add Flathub user repo, but no user packages
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
