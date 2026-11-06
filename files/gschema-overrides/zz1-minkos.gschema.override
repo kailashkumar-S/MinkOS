@@ -1,0 +1,7 @@
+[org.gnome.desktop.interface]
+cursor-theme='catppuccin-mocha-mauve-cursors'
+icon-theme='Papirus'
+color-scheme='prefer-dark'
+gtk-theme='catppuccin-mocha-mauve-standard+default'
+font-name='Noto Sans 11'
+monospace-font-name='JetBrainsMono Nerd Font 11'
