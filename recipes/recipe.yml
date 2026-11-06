@@ -64,26 +64,9 @@ modules:
       - catppuccin-cursor.sh
       - catppuccin-gtk.sh
 
-  - type: gsettings # system-wide GTK defaults: dark mode, fonts, cursor and icons
-    settings:
-      - schema: org.gnome.desktop.interface
-        key: cursor-theme
-        value: catppuccin-mocha-mauve-cursors
-      - schema: org.gnome.desktop.interface
-        key: icon-theme
-        value: Papirus
-      - schema: org.gnome.desktop.interface
-        key: color-scheme
-        value: prefer-dark
-      - schema: org.gnome.desktop.interface
-        key: gtk-theme
-        value: catppuccin-mocha-mauve-standard+default
-      - schema: org.gnome.desktop.interface
-        key: font-name
-        value: Noto Sans 11
-      - schema: org.gnome.desktop.interface
-        key: monospace-font-name
-        value: JetBrainsMono Nerd Font 11
+  - type: gschema-overrides # system-wide GTK defaults: dark mode, fonts, cursor and icons
+    include:
+      - zz1-minkos.gschema.override
 
   - type: systemd
     system:
