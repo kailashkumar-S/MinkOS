@@ -3,10 +3,10 @@
 # image will be published to ghcr.io/<user>/<name>
 name: minkos
 # description will be included in the image's metadata
-description: minkos - My distro based on
+description: minkos - My distro based on Universal blue base main
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
+base-image: ghcr.io/ublue-os/base-main 
 image-version: latest # You can pin to a specific version of Fedora as well
 
 # module configuration, executed in order
@@ -18,28 +18,89 @@ modules:
         destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
 
   - type: dnf
-    repos:
-      copr:
-        - atim/starship
     install:
       packages:
-        - micro
-        - starship
-    remove:
-      packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
-        - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+        - micro # terminal text editor
+        - niri # scrollable-tiling Wayland compositor
+        - xdg-desktop-portal-gnome # portal backend niri uses (screencast, file picker)
+        - xdg-desktop-portal-gtk # portal fallback for GTK apps
+        - fuzzel # app launcher
+        - waybar # status bar
+        - mako # notification daemon
+        - alacritty # terminal emulator (niri's default)
+        - swaylock # screen locker
+        - swayidle # runs commands on idle (auto-lock, screen off, lock before suspend)
+        - swaybg # wallpaper
+        - polkit-gnome # polkit authentication agent (privilege prompts)
+        - gdm # display/login manager
+        - tmux
+        - NetworkManager # network management daemon
+        - NetworkManager-wifi # Wi-Fi support for NetworkManager
+        - network-manager-applet # nm-applet tray icon
+        - nm-connection-editor # GUI for network connection settings
+        - bluez # Bluetooth stack
+        - blueman # Bluetooth tray icon and manager GUI
+        - pipewire # audio/video server
+        - pipewire-pulseaudio # PulseAudio compatibility for apps
+        - wireplumber # PipeWire session manager
+        - pavucontrol # volume control GUI
+        - wl-clipboard # Wayland clipboard CLI (wl-copy / wl-paste)
+        - brightnessctl # screen brightness control
+        - playerctl # media player key control
+        - upower # battery/power status daemon
+        - power-profiles-daemon # power profile switching
+        - nautilus # file manager
+        - google-noto-sans-fonts # base UI font
+        - papirus-icon-theme # icon theme (Papirus-Light)
+        - unzip # needed by the cursor and GTK install scripts
+
+  - type: fonts
+    fonts:
+      nerd-fonts:
+        - JetBrainsMono # coding font with Nerd Font icons
+
+  - type: script # downloads and installs the Catppuccin Mocha cursor and GTK themes
+    scripts:
+      - catppuccin-cursor.sh
+      - catppuccin-gtk.sh
+
+  - type: gsettings # system-wide GTK defaults: dark mode, fonts, cursor and icons
+    settings:
+      - schema: org.gnome.desktop.interface
+        key: cursor-theme
+        value: catppuccin-mocha-mauve-cursors
+      - schema: org.gnome.desktop.interface
+        key: icon-theme
+        value: Papirus
+      - schema: org.gnome.desktop.interface
+        key: color-scheme
+        value: prefer-dark
+      - schema: org.gnome.desktop.interface
+        key: gtk-theme
+        value: catppuccin-mocha-mauve-standard+default
+      - schema: org.gnome.desktop.interface
+        key: font-name
+        value: Noto Sans 11
+      - schema: org.gnome.desktop.interface
+        key: monospace-font-name
+        value: JetBrainsMono Nerd Font 11
+
+  - type: systemd
+    system:
+      enabled:
+        - gdm.service # start GDM at boot
+        - NetworkManager.service # networking
+        - bluetooth.service # Bluetooth
+        - upower.service # power/battery info
+        - power-profiles-daemon.service # power profiles
+    default-target: graphical.target
 
   - type: default-flatpaks
     configurations:
       - notify: true # Send notification after install/uninstall is finished (true/false)
         scope: system
         # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
-          - org.gnome.Loupe
+        install: [] # system flatpaks we want all users to have and not remove
       - scope: user # Also add Flathub user repo, but no user packages
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
