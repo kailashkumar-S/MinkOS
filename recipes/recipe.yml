@@ -63,6 +63,7 @@ modules:
     scripts:
       - catppuccin-cursor.sh
       - catppuccin-gtk.sh
+      - default-target.sh
 
   - type: gschema-overrides # system-wide GTK defaults: dark mode, fonts, cursor and icons
     include:
@@ -76,7 +77,6 @@ modules:
         - bluetooth.service # Bluetooth
         - upower.service # power/battery info
         - power-profiles-daemon.service # power profiles
-    default-target: graphical.target
 
   - type: default-flatpaks
     configurations:
